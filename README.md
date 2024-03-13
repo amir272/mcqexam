@@ -3,11 +3,11 @@
 * React application is also packed inside a jar
 * This removes the requirement for separate deployment of applications
 * #### Features of the applicaiton:
-  Can add questions, options and answer keys at one go
-  Image can be added in the questions or any options however its not recommended to add in the answer keys
-  Having option for adding image will help in adding questions/options which might be difficult to add using texts eg. figures and mathematical symbols
-  A simple run of the jar file will start the application
-  We can run the jar using java -jar exam-0.0.1-SNAPSHOT.jar
+  * Can add questions, options and answer keys at one go
+  * Image can be added in the questions or any options however its not recommended to add in the answer keys
+  * Having option for adding image will help in adding questions/options which might be difficult to add using texts eg. figures and mathematical symbols
+  * A simple run of the jar file will start the application
+  * We can run the jar using java -jar exam-0.0.1-SNAPSHOT.jar
 #### Format for adding questions, options and answer keys:
 GQ Question 1 Gopts
 Go 1 Option 1 for Question 1
