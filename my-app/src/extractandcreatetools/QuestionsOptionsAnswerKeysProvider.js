@@ -5,25 +5,47 @@ import {createAnswerKeyMapping} from "./AnswerKeyMapper";
 import {extractOptions} from "./ExtractOptions";
 import {extractQuestions} from "./ExtractQuestions";
 import {regexPatternForQuestionAndOptions} from "./RegexPatterns";
+import {useState} from "react";
 
-export default function ExtractAndReturn(withTags, quizid){
-    let questionList = [];
-    let optionsList = [];
-    let keyList = [];
+export default function ExtractAndReturn(withTags, quizid, totalQuestion, questionList, optionsList, keyList){
+    let added = false
     console.log(withTags);
     // Replace <p> with an empty space, </p> and <br> with a newline
-    let cleanedString = withTags.replace(/<p>/g, '').replace(/<\/p>|<br>/g, '\n');
-    const questionOptionsAndKeys = explodeString(cleanedString, "AnswerKeys");
-    const questionAndOptionsArray = extractQuestions(questionOptionsAndKeys[0]);
-    for(let i = 0; i < questionAndOptionsArray.length; i++){
-        console.log([i]+ "th element: " + questionAndOptionsArray[i]);
+    let cleanedString = withTags
+        .replace(/<\/p>|<br>/g, '\n')
+        .replace(/<strong>|<\/strong>/g, '')
+        .replace(/<span[^>]*>/g, '')
+        .replace(/&nbsp;/g, ' ');
+    // const questionOptionsAndKeys = explodeString(cleanedString, "AnswerKeys");
+    // const questionAndOptionsArray = extractQuestions(questionOptionsAndKeys[0]);
+    // for(let i = 0; i < questionAndOptionsArray.length; i++){
+    //     console.log([i]+ "th element: " + questionAndOptionsArray[i]);
+    // }
+    // const answerKeysString = questionOptionsAndKeys[1];
+    // let answerKeysMap = createAnswerKeyMapping(answerKeysString);
+    // console.log("questionAndOptionsArray: " + questionAndOptionsArray);
+    // compareQuestionArrayAndKeysArraySize(questionAndOptionsArray, answerKeysMap);
+    // createQuestionAndOptionsList(questionAndOptionsArray, questionList, optionsList);
+    // createAnswerKeysList(answerKeysMap, questionList);
+
+    if (cleanedString.includes("AnswerKeys")) {
+        const answerKeysString = cleanedString.split("AnswerKeys")[1]
+        let answerKeysMap = createAnswerKeyMapping(answerKeysString);
+        if (!compareQuestionArrayAndKeysArraySize(questionList, answerKeysMap)) {
+            added = false
+            return {questionList, optionsList, keyList, added};
+        }
+        if(questionList.length === keyList.length){
+            alert("Questions and keys are already added")
+            added = true
+            return {questionList, optionsList, keyList, added};
+        }
+        createAnswerKeysList(answerKeysMap, questionList);
+        added = true
+    } else {
+        createQuestionAndOptionsList(cleanedString, questionList, optionsList);
     }
-    const answerKeysString = questionOptionsAndKeys[1];
-    let answerKeysMap = createAnswerKeyMapping(answerKeysString);
-    console.log("questionAndOptionsArray: " + questionAndOptionsArray);
-    compareQuestionArrayAndKeysArraySize(questionAndOptionsArray, answerKeysMap);
-    createQuestionAndOptionsList(questionAndOptionsArray, questionList, optionsList);
-    createAnswerKeysList(answerKeysMap, questionList);
+
     function createOptionObject(questionId, optionsArr){
         const options = {};
         options['questionId'] = questionId;
@@ -39,22 +61,27 @@ export default function ExtractAndReturn(withTags, quizid){
     }
 
     function createQuestionAndOptionsList(questionAndOptionsArray, questionList, optionsList){
-        for (let i = 0; i < questionAndOptionsArray.length; i++) {
-            const questionAndOptionsString = explodeStringWithRegex(questionAndOptionsArray[i], regexPatternForQuestionAndOptions);
+        // for (let i = 0; i < questionAndOptionsArray.length; i++) {
+            const questionAndOptionsString = explodeStringWithRegex(questionAndOptionsArray, regexPatternForQuestionAndOptions);
             let questionText = questionAndOptionsString[0];
             const optionsString = questionAndOptionsString[1];
             const optionsArray= extractOptions(optionsString);
-            console.log("question for no. " + (i+1) + ": " + questionText);
-            console.log("options: " + (i+1) + " : " + optionsArray);
-            if(optionsArray.length > 1 && optionsArray.length < 6){
+            console.log("question", questionText);
+            console.log("options: ", optionsArray);
+            if(optionsArray.length > 3 && optionsArray.length < 6){
                 if (questionText.length < 1) {
                     questionText = " ";
                 }
+                added = true
+            } else {
+                alert("Question and options are not properly formatted")
+                added = false
+                return
             }
             const questionObject = createQuestionObject(quizid, questionText);
             questionList.push(questionObject);
             optionsList.push(createOptionObject(questionObject.questionId, optionsArray));
-        }
+        // }
     }
 
     function createAnswerKeysList(answerKeysMap, questionList){
@@ -65,9 +92,10 @@ export default function ExtractAndReturn(withTags, quizid){
     }
     function compareQuestionArrayAndKeysArraySize(questionAndOptionsArray, answerKeysMap){
         if(questionAndOptionsArray.length !== answerKeysMap.size) {
-            alert(questionAndOptionsArray.length + "is no. of Ques and key total no. is"+ answerKeysMap.size);
-            throw new Error(`Answer keys number and questions number are not equal`);
+            alert(questionAndOptionsArray.length + "is the no. of Ques and key total no. is"+ answerKeysMap.size);
+            return false;
         }
+        return true;
     }
-    return {questionList, optionsList, keyList};
+    return {questionList, optionsList, keyList, added};
 }

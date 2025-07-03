@@ -1,12 +1,13 @@
 export function createAnswerKeyMapping(answerKeys) {
     console.log(answerKeys);
+    answerKeys = answerKeys.replace(/<p>|<br>/g, '\n')
     console.log(answerKeys);
     const lines = answerKeys.split('\n');
     let keys= new Map();
 
     for (let line of lines) {
         console.log("line: " + line);
-        const parts = line.split(' ');
+        const parts = line.trim().split(' ');
         if(line === " " || line === "" || line === '\n') continue;
         for (let i = 0; i < parts.length; i += 2) {
             let questionNumber = parts[i];

@@ -35,6 +35,40 @@ const myObjects = [
         "password": "12345"
     }
 ];
+
+
+const questionData = [  {
+    question: 'What is your favorite color?',
+    options: [
+        { answer: 'Red' },
+        { answer: 'Blue' },
+        { answer: 'Green' },
+        { answer: 'Yellow' },
+    ],
+    answerKey: 1,
+},
+    {
+        question: 'What is your favorite food?',
+        options: [
+            { answer: 'Pizza' },
+            { answer: 'Burger' },
+            { answer: 'Sushi' },
+            { answer: 'Tacos' },
+        ],
+        answerKey: 2,
+    },
+    {
+        question: 'What is your favorite hobby?',
+        options: [
+            { answer: 'Reading' },
+            { answer: 'Gardening' },
+            { answer: 'Playing video games' },
+            { answer: 'Sports' },
+        ],
+        answerKey: 3,
+    },
+];
+
 useEffect(() => {
     fetch("api/addusers", {
         method: "POST",
@@ -54,6 +88,7 @@ const [data, setData] = useState('');
 useEffect(() => {
     fetch('/api/data')
         .then(response => response.text())
-        .then(data => setData(data));
+        .then(data => setData(data));//this should be immediately after the data is declared. {console.log; setData} won't work
+
 }, []);
 

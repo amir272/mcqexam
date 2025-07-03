@@ -1,4 +1,13 @@
 export function extractQuestions(questionsString) {
+    // Find the index of the first question
+    // const firstQuestionIndex = questionsString.search(/Q\d+\.|\d+\./);
+    // if (firstQuestionIndex === -1) {
+    //     alert("No questions found");
+    //     return []; // No questions found
+    // }
+    // // Slice the string from the first question
+    // questionsString = questionsString.slice(firstQuestionIndex);
+
     let currentQuestion = '';
     let questions = [];
     for (let i = 0; i < questionsString.length; i++) {
@@ -24,7 +33,7 @@ export function extractQuestions(questionsString) {
     return questions;
 }
 
-let questionsString = `1. In question select the related letter
+let questionsString = `>p>Q1. In question select the related letter
 number
 from the given Alternatives.
 8 : 9 : : 64 : ?
@@ -33,7 +42,7 @@ Options
 (B) 25
 (C) 36
 (D) 46
-2. In question select the related letter
+Q2. In question select the related letter
 number
 from the given Alternatives.
 DFHj : WUSQ : : CEGi : ?
@@ -42,7 +51,7 @@ Options
 (B) XURT
 (C) XVTR
 (D) XYZR
-3. In question select the related letter
+Q3. In question select the related letter
 number
 from the given Alternatives.
 9, 81, 9 : 3, 9, 3 : : 4, 16, 4 : ?
@@ -51,7 +60,7 @@ Options
 (B) 6, 9, 6
 (C) 2, 8, 2
 (D) 2, 4, 2
-4. In question select the related letter
+Q4. In question select the related letter
 number
 from the given Alternatives.
 RAJASTHAN : JODHPUR : : PUNJAB : ?
@@ -60,7 +69,7 @@ Options
 (B) LUDHIANA
 (C) CHANDIGARH
 (D) AMRITSHAR
-5. In question select the related letter
+Q5. In question select the related letter
 number
 from the given Alternatives.
 Nephew : ? : : Niece : Daughter
@@ -69,7 +78,7 @@ Options
 (C) Sister
 (D) Mother
 
-6. In question select the related letter
+Q6. In question select the related letter
 number
 from the given Alternatives.
 B2Y25 : D4W23 : : C3X24 : ?
@@ -78,7 +87,7 @@ Options
 (B) F6U21
 (C) E5U22
 (D) E5V22
-7. In question select the related letter
+Q7. In question select the related letter
 number
 from the given Alternatives.1710487458308mceclip0.png">
 Cripps Mission : 1942 : : Cabinet Mission : ?
@@ -87,7 +96,7 @@ Options
 (B) 1949
 (C) 1944
 (D) 1947
-8. In question find the odd
+Q8. In question find the odd
 Word/Number/Letter/ Number pair from the
 given alternatives.
 Choose the right options.
@@ -96,7 +105,7 @@ Options
 (B) Kerala
 (C) Orissa
 (D) Meghalaya
-9. In question find the odd
+Q9. In question find the odd
 Word/Number/Letter/ Number pair from the
 given alternatives.
 Choose the right options-
@@ -105,7 +114,7 @@ Options
 (B) Dr. A.P.J. Abdul Kalam
 (C) Charan Singh
 (D) Manmohan Singh
-10. In question find the odd
+Q10. In question find the odd
 Word/Number/Letter/ Number pair from the
 given alternatives.
 Choose the right options-

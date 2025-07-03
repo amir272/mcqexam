@@ -1,4 +1,4 @@
-import {makeid} from "./RandString";
+import {makeid} from "../utils/RandString";
 
 export function createQuestionObject(quizId, questionText) {
     return {

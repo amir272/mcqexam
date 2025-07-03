@@ -1,4 +1,4 @@
-import {purify} from "./Dompurify";
+import {purify} from "../utils/Dompurify";
 
 export function createAnswerObject( questionId, correctOption) {
     return {
