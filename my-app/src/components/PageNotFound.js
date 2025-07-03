@@ -1,15 +1,25 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Container, Row, Col, Button } from 'react-bootstrap';
+import { AlertTriangle } from 'lucide-react';
 
 const PageNotFound = () => (
-    <div className="flex items-center justify-center min-h-screen text-center">
-        <div>
-            <h1 className="text-6xl font-bold text-gray-800">404</h1>
-            <p className="text-xl text-gray-600 mt-4">Page Not Found</p>
-            <Link to="/manage" className="mt-6 inline-block bg-blue-600 text-white px-6 py-2 rounded-lg shadow-sm hover:bg-blue-700">
-                Go to Dashboard
-            </Link>
-        </div>
+    <div className="d-flex align-items-center justify-content-center vh-100 bg-light">
+        <Container>
+            <Row className="justify-content-center">
+                <Col md={8} className="text-center">
+                    <AlertTriangle className="text-warning mb-4" size={64} />
+                    <h1 className="display-1 fw-bold">404</h1>
+                    <p className="h2">Page Not Found</p>
+                    <p className="lead text-muted mb-4">
+                        Sorry, the page you are looking for does not exist.
+                    </p>
+                    <Button as={Link} to="/manage" variant="primary">
+                        Go to Dashboard
+                    </Button>
+                </Col>
+            </Row>
+        </Container>
     </div>
 );
 
