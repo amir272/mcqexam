@@ -1,2 +1,4 @@
-package com.nodedjava.exam.controller;public class BatchController {
+package com.nodedjava.exam.controller;
+
+public class BatchController {
 }

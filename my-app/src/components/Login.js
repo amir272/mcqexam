@@ -1,106 +1,204 @@
-import React, {useContext, useEffect} from 'react';
-import { Link } from "react-router-dom";
-import { useNavigate, useLocation } from "react-router-dom";
-import TinyEditor from "./TinyEditor";
-import {AuthContext} from "./AuthProvider";
+import React, { useContext, useState } from 'react';
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { AuthContext } from "./AuthProvider";
+import { FaUser, FaLock, FaArrowRight } from 'react-icons/fa'; // Icons for a professional touch
+import backgroundImage from "../image/1000421632.jpg";
+import logo from "../image/1000421632.jpg";
 
-function Login(){
-    const { username, name, password, login, logout } = useContext(AuthContext);
-    let navigate = useNavigate();
-    const routeLogin = () => {
-        let path = `/quiz`;
-        navigate(path);
-    }
-    if(username != '') routeLogin();
+function Login() {
+    const { username, login } = useContext(AuthContext);
+    const navigate = useNavigate();
     const location = useLocation();
-    console.log(location.state)
-    if(location.state != null){
-        login(location.state.userName, location.state.fullName, location.state.password);
-        routeLogin()
-    }
 
-    const obj = {username: "", password: ""};
-    const [formData, setFormData] = React.useState(obj);
-    const [employee, setEmployee] = React.useState({});
-    const [msg, setMsg] = React.useState("");
-    function handleChange(e){
-        e.preventDefault();
-        setFormData(prevData =>{
-           return{
+    // --- State Management ---
+    const [formData, setFormData] = useState({ username: "", password: "" });
+    const [msg, setMsg] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    // --- Redirect if already logged in ---
+    React.useEffect(() => {
+        if (username) {
+            navigate('/user');
+        }
+    }, [username, navigate]);
+
+    // --- Handle login from registration redirect ---
+    React.useEffect(() => {
+        if (location.state?.userName) {
+            login(location.state.userName, location.state.fullName, location.state.password);
+            navigate('/user');
+        }
+    }, [location.state, login, navigate]);
+
+    // --- Form Handlers ---
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevData => ({
             ...prevData,
-            [e.target.name]: e.target.value
-           } 
-        })
-        console.log(formData)
-    }
-    async function handleSubmit(e){
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        await fetch(`api/user/${formData.username}/${formData.password}`)
-      .then(response => response.json())
-      .then(data => {
-        setEmployee(data);
-        setMsg("Successfully logged in")
-          login(data.userName, data.fullName, data.password)
-        routeLogin();
-        console.log(employee)})
-        .catch(err => {
-            // Do something for an error here
-            setMsg("Incorrect username password");
-          })
-      
-  }
+        setLoading(true);
+        setMsg("");
+        try {
+            const response = await fetch(`api/user/${formData.username}/${formData.password}`);
+            if (!response.ok) {
+                throw new Error("Incorrect username or password");
+            }
+            const data = await response.json();
+            setMsg("Successfully logged in! Redirecting...");
+            login(data.userName, data.fullName, data.password);
+            setTimeout(() => navigate('/user'), 1500);
+        } catch (err) {
+            setMsg("Error: Incorrect username or password");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
-        <div className="bg1">
-            <section className="h-100 h-custom">
-  <div className="container py-5 h-100">
-    <div className="row d-flex justify-content-center align-items-center h-100">
-      <div className="col-lg-8 col-xl-6">
-        <div className="card rounded-3">
-          <div className="card-body p-4 p-md-5">
-            <h3 className="mb-4 pb-2 pb-md-0 mb-md-5 px-md-2">Login Info</h3>
-            <Link to="/register">
-                <button type="button" className="btn btn-secondary">Register if not already registered</button></Link>
-            <p className="alert-danger">{msg}</p>
-            <form className="px-md-2" onSubmit={handleSubmit}>
+        <div style={styles.container}>
+            <div style={styles.loginCard}>
+                <img src={backgroundImage} alt="GUNCHU COACHING Logo" style={styles.logoImage} />
+                <h2 style={styles.title}>Student Login</h2>
 
+                {msg && (
+                    <p style={{...styles.message, color: msg.startsWith("Error") ? '#e74c3c' : '#2ecc71' }}>
+                        {msg}
+                    </p>
+                )}
 
-
-                <fieldset>
-                    <div className="row">
-                        <div className="form-group">
-                            <label className="col-md-12 control-label" htmlFor="userName">Username</label>
-                            <div className="col-md-12">
-                    <input type="text" id="userName" name="username" className="form-control"value={formData.username} onChange={handleChange} />
-                            </div>
-                        </div>
-                    <div className="form-group">
-                        <div className="col-md-12">
-                            <label htmlFor="exampleDatepicker1" className="form-label" >Password</label>
-                    <input type="password" className="form-control" name="password"  value={formData.password} onChange={handleChange} id="exampleDatepicker1" />
-
-                  </div>
+                <form onSubmit={handleSubmit}>
+                    <div style={styles.inputGroup}>
+                        <FaUser style={styles.inputIcon} />
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            style={styles.inputField}
+                            value={formData.username}
+                            onChange={handleChange}
+                            placeholder="Username"
+                            required
+                        />
                     </div>
+                    <div style={styles.inputGroup}>
+                        <FaLock style={styles.inputIcon} />
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            style={styles.inputField}
+                            value={formData.password}
+                            onChange={handleChange}
+                            placeholder="Password"
+                            required
+                        />
+                    </div>
+                    <button type="submit" style={styles.submitButton} disabled={loading}>
+                        {loading ? 'Logging In...' : 'Login'}
+                    </button>
+                </form>
 
-                <div className="form-group">
-                    <label className="col-md-12 control-label" htmlFor="submit"></label>
-                    <div className="col-md-12">
-                        <button type="submit" className="btn btn-success btn-lg mb-1">Submit</button>
-                    </div>
-                    </div>
-                    </div>
-                </fieldset>
-            </form>
-
-          </div>
+                <div style={styles.linksContainer}>
+                    <Link to="/register" style={styles.link}>Not registered yet? Sign Up</Link>
+                    <Link to="/admin" style={styles.link}>
+                        Admin Portal <FaArrowRight style={{ marginLeft: '5px' }} />
+                    </Link>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-            
-        </div>
-    )
+    );
 }
+
+// --- Professional Styles ---
+const styles = {
+    logoImage: {
+        height: '50px',
+        width: 'auto',
+        margin: '10px 0'
+    },
+    container: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        backgroundColor: '#eef2f5',
+        fontFamily: "'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
+    },
+    loginCard: {
+        backgroundColor: '#ffffff',
+        padding: '40px 50px',
+        borderRadius: '12px',
+        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+        width: '100%',
+        maxWidth: '450px',
+        textAlign: 'center',
+    },
+    title: {
+        marginBottom: '10px',
+        color: '#2c3e50',
+        fontWeight: '600',
+        fontSize: '2rem',
+    },
+    subtitle: {
+        marginBottom: '30px',
+        color: '#7f8c8d',
+    },
+    inputGroup: {
+        position: 'relative',
+        marginBottom: '20px',
+    },
+    inputIcon: {
+        position: 'absolute',
+        left: '15px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        color: '#bdc3c7',
+    },
+    inputField: {
+        width: '100%',
+        padding: '15px 15px 15px 45px',
+        border: '1px solid #dfe6e9',
+        borderRadius: '8px',
+        fontSize: '1rem',
+        transition: 'border-color 0.3s, box-shadow 0.3s',
+    },
+    submitButton: {
+        width: '100%',
+        padding: '15px',
+        border: 'none',
+        borderRadius: '8px',
+        backgroundColor: '#3498db',
+        color: '#ffffff',
+        fontSize: '1.1rem',
+        fontWeight: 'bold',
+        cursor: 'pointer',
+        transition: 'background-color 0.3s',
+        marginTop: '10px',
+    },
+    linksContainer: {
+        marginTop: '30px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    link: {
+        color: '#3498db',
+        textDecoration: 'none',
+        fontSize: '0.9rem',
+        display: 'flex',
+        alignItems: 'center',
+    },
+    message: {
+        padding: '10px',
+        borderRadius: '5px',
+        marginBottom: '20px',
+        fontWeight: '500',
+    }
+};
 
 export default Login;

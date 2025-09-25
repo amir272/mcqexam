@@ -22,10 +22,11 @@ export const AuthProvider = ({ children }) => {
         setUsername('');
         setName('');
         setPassword('');
+        setAdmin('');
     };
 
     return (
-        <AuthContext.Provider value={{ username, name, password, login, logout, adminName, admin }}>
+        <AuthContext.Provider value={{ username, name, password,adminName , logout, login, admin }}>
             {children}
         </AuthContext.Provider>
     );
